@@ -83,37 +83,3 @@ int	print_hex(void *p, char *base, long size)
 	putbase((unsigned long)p, base, size, &count);
 	return (count);
 }
-
-// int	main(void)
-// {
-// 	int	count;
-// 	char	*str;
-//
-// 	count = 0;
-// 	str = NULL; 
-// 	// count = ft_printf("Salut\n");
-// 	// printf("%d\n", count);
-//
-// 	// count = ft_printf("%d\n", 42);
-// 	// printf("%d\n", count);
-//
-// 	// count = ft_printf("%d\n", 2147483647);
-// 	// printf("%d\n", count);
-//
-// 	// count = ft_printf("%d\n", -2147483648);
-// 	// printf("%d\n", count);
-//
-// 	// count = ft_printf(0);
-// 	// printf("%d\n", count);
-//
-// 	// count = ft_printf("%p", count);
-// 	// printf("%d\n", count);
-//
-// 	// count = ft_printf("%s", str);
-// 	// printf("%d\n", count);
-//
-// 	count = ft_printf("%d", 42);
-// 	printf("%d\n", count);
-//
-// 	return (0);
-// }
