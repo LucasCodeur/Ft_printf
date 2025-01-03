@@ -15,7 +15,7 @@ CC := cc
 CFLAGS := -Wall -Werror -Wextra
 SRC := ft_printf.c ft_printf_utils.c
 OBJ := $(SRC:.c=.o)
-H_FILES := ft_print.h
+H_FILES := ft_printf.h
 LIBFT_DIR := ./libft
 LIBFT := $(LIBFT_DIR)/libft.a
 
