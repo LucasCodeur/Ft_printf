@@ -9,7 +9,7 @@
 Fonction principal permettant de print sur la sortie standard, a argument variable :
 
 ```
-	int	ft_printf(const char *format, ...)
+int	ft_printf(const char *format, ...)
 {
 	int		count;
 	va_list	args;
