@@ -2,7 +2,7 @@
 
 ## Description
 
-"ft_printf est un projet qui consiste a recoder une version simplifiee de la fonction printf de la libc. Il permet d'afficher differents types de donnees sur la sortie standard (comme des entiers, des chaines de caracteres, des caracteres, des pointeurs, etc.), tout en gerant des formats specifiques comme `%d`, `%s`, `%x`, `%p`, etc."
+ft_printf est un projet qui consiste a recoder une version simplifiee de la fonction printf de la libc. Il permet d'afficher differents types de donnees sur la sortie standard (comme des entiers, des chaines de caracteres, des caracteres, des pointeurs, etc.), tout en gerant des formats specifiques comme `%d`, `%s`, `%x`, `%p`, etc.
 
 ### Fonctionnalites 
 
