@@ -15,7 +15,7 @@
 
 static size_t	is_sep(char const c, char const *set)
 {
-	size_t		i;
+	size_t	i;
 
 	i = 0;
 	while (set[i])

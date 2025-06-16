@@ -12,33 +12,35 @@
 
 #include "ft_printf.h"
 
-static int	print_format(char format, va_list args)
+// Allow to handle differents format of printf
+static int	print_format(int fd, char format, va_list args)
 {
-	int		count;
+	int	count;
 
 	count = 0;
 	if (format == 'c')
-		count += print_char(va_arg(args, int));
+		count = print_char(fd,va_arg(args, int));
 	else if (format == 's')
-		count += print_str(va_arg(args, char *));
+		count = print_str(fd, va_arg(args, char *));
 	else if (format == 'p')
-		count += print_hex(va_arg(args, void *), "0123456789abcdef", 16);
+		count = print_hex(fd, va_arg(args, void *), BASE_HEX);
 	else if (format == 'd')
-		count += print_nbr(va_arg(args, int), "0123456789abcdef", 10);
+		count = print_nbr(fd, va_arg(args, int), BASE_HEX);
 	else if (format == 'u')
-		count += print_nbr(va_arg(args, unsigned int), "0123456789abcdef", 10);
+		count = print_nbr(fd,va_arg(args, unsigned int), BASE_HEX);
 	else if (format == 'i')
-		count += print_nbr(va_arg(args, int), "0123456789abcdef", 10);
+		count = print_nbr(fd, va_arg(args, int), BASE_HEX);
 	else if (format == 'x')
-		count += print_nbr(va_arg(args, unsigned int), "0123456789abcdef", 16);
+		count = print_nbr(fd, va_arg(args, unsigned int), BASE_HEX);
 	else if (format == 'X')
-		count += print_nbr(va_arg(args, unsigned int), "0123456789ABCDEF", 16);
+		count = print_nbr(fd, va_arg(args, unsigned int), BASE_HEX_MAJ);
 	else if (format == '%')
-		count += write(1, "%", 1);
+		count = write(fd, "%", 1);
 	return (count);
 }
 
-int	ft_printf(const char *format, ...)
+// Write to the standard output
+int	ft_printf_fd(int fd, const char *format, ...)
 {
 	int		count;
 	va_list	args;
@@ -50,9 +52,9 @@ int	ft_printf(const char *format, ...)
 	while (*format)
 	{
 		if (*format == '%')
-			count += print_format(*++format, args);
+			count += print_format(fd, *++format, args);
 		else
-			count += write(1, format, 1);
+			count += write(fd, format, 1);
 		if (count == -1)
 			return (-1);
 		++format;

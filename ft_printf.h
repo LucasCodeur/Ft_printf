@@ -13,14 +13,22 @@
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
 
+# include "./libft/libft.h"
 # include <stdarg.h>
 # include <unistd.h>
-# include "./libft/libft.h"
 
-int	print_hex(void *p, char *base, long size_base);
-int	print_char(char c);
-int	print_str(char *str);
-int	print_nbr(long nb, char *base, long size_base);
-int	ft_printf(const char *format, ...);
+# ifndef BASE_HEX
+#  define BASE_HEX "0123456789abcdef"
+# endif
+
+# ifndef BASE_HEX_MAJ
+#  define BASE_HEX_MAJ "0123456789ABCDEF"
+# endif
+
+int	print_hex(int fd, void *p, char *base);
+int	print_char(int fd, char c);
+int	print_str(int fd, char *str);
+int	print_nbr(int fd, long nb, char *base);
+int	ft_printf(int fd, const char *format, ...);
 
 #endif

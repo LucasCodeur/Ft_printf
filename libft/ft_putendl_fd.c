@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
 #include "libft.h"
+#include <unistd.h>
 
 int	ft_putendl_fd(char *s, int fd)
 {

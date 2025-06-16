@@ -14,8 +14,8 @@
 
 static int	ft_isspace(int c)
 {
-	return (c == ' ' || c == '\t' || c == '\n'
-		|| c == '\v' || c == '\f' || c == '\r');
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
+		|| c == '\r');
 }
 
 static int	ft_is_plus_or_minus(int c)

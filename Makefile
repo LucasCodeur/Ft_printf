@@ -19,17 +19,17 @@ H_FILES := ft_printf.h
 LIBFT_DIR := ./libft
 LIBFT := $(LIBFT_DIR)/libft.a
 
-all: $(NAME)
+all: lib $(NAME) 
 
-$(NAME): $(OBJ) $(LIBFT)
-	cp $(LIBFT) $(NAME)
+$(NAME): $(OBJ) 
+	cp $(LIBFT) . 
 	ar -rcs $(NAME) $(OBJ)
 
 %.o: %.c $(H_FILES)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(LIBFT):
-	$(MAKE) -C $(LIBFT_DIR) -j$(nproc)
+lib: 
+	$(MAKE) -C $(LIBFT_DIR) -j
 
 clean:
 	rm -f *.o

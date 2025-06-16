@@ -12,14 +12,17 @@
 
 #include "ft_printf.h"
 
-void	putbase(unsigned long nb, char *base, unsigned long size, int *count)
+// Convert a number into a specified base and writes 
+// the result to standard output
+void	putbase(int fd, unsigned long nb, char *base, int *count)
 {
-	int	tmp;
+	int		tmp;
+	size_t	size;
 
-	tmp = 0;
+	size = ft_strlen(base);
 	if (nb >= size)
-		putbase(nb / size, base, size, count);
-	tmp += write(1, &base[nb % size], 1);
+		putbase(fd, nb / size, base, count);
+	tmp = write(fd, &base[nb % size], 1);
 	*count += tmp;
 	if (tmp == -1)
 	{
@@ -28,58 +31,60 @@ void	putbase(unsigned long nb, char *base, unsigned long size, int *count)
 	}
 }
 
-int	print_char(char c)
+// Write a char
+int	print_char(int fd, char c)
 {
-	return (write(1, &c, 1));
+	return (write(fd, &c, 1));
 }
 
-int	print_str(char *str)
-{
-	int		count;
-
-	count = 0;
-	if (!str)
-	{
-		count += ft_putstr_fd("(null)", 1);
-		if (count == -1)
-			return (-1);
-		return (6);
-	}
-	count += ft_putstr_fd(str, 1);
-	return (count);
-}
-
-int	print_nbr(long nb, char *base, long size)
+// Write a string
+int	print_str(int fd, char *str)
 {
 	int	count;
 
 	count = 0;
-	if (nb < 0 && size == 10)
+	if (!str)
 	{
-		nb = -nb;
-		count += write(1, "-", 1);
-		if (count == -1)
-			return (-1);
+		count += ft_putstr_fd("(null)", fd);
+		return (count);
 	}
-	putbase(nb, base, size, &count);
+	count += ft_putstr_fd(str, fd);
 	return (count);
 }
 
-int	print_hex(void *p, char *base, long size)
+// Write a number
+int	print_nbr(int fd, long nb, char *base)
 {
 	int		count;
+	size_t	size;
+
+	count = 0;
+	size = ft_strlen(base);
+	if (nb < 0 && size == 10)
+	{
+		nb = -nb;
+		count = write(fd, "-", fd);
+		if (count == -1)
+			return (-1);
+	}
+	putbase(fd, nb, base, &count);
+	return (count);
+}
+
+// Write in a hexadecimal format
+int	print_hex(int fd, void *p, char *base)
+{
+	int	count;
 
 	count = 0;
 	if (!p)
 	{
-		count = ft_putstr_fd("(nil)", 1);
-		if (count == -1)
-			return (-1);
-		return (5);
+		count = ft_putstr_fd("(nil)", fd);
+		return (count);
 	}
-	count += ft_putstr_fd("0x", 1);
+	count = ft_putstr_fd("0x", fd);
 	if (count == -1)
 		return (-1);
-	putbase((unsigned long)p, base, size, &count);
+	putbase(fd, (unsigned long)p, base, &count);
 	return (count);
 }
