@@ -13,7 +13,6 @@
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
 
-# include "./libft/libft.h"
 # include <stdarg.h>
 # include <unistd.h>
 
@@ -25,10 +24,12 @@
 #  define BASE_HEX_MAJ "0123456789ABCDEF"
 # endif
 
-int	print_hex(int fd, void *p, char *base);
-int	print_char(int fd, char c);
-int	print_str(int fd, char *str);
-int	print_nbr(int fd, long nb, char *base);
-int	ft_printf(int fd, const char *format, ...);
+size_t	ft_strlen(const char *str);
+int		ft_putstr_fd(char *s, int fd);
+int		print_hex(int fd, void *p, char *base);
+int		print_char(int fd, char c);
+int		print_str(int fd, char *str);
+int		print_nbr(int fd, long nb, char *base);
+int		ft_printf(int fd, const char *format, ...);
 
 #endif

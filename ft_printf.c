@@ -12,6 +12,27 @@
 
 #include "ft_printf.h"
 
+#include <stddef.h>
+
+size_t	ft_strlen(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	while (str[i])
+		i++;
+	return (i);
+}
+
+int	ft_putstr_fd(char *s, int fd)
+{
+	if (!s)
+		return (0);
+	return (write(fd, s, ft_strlen(s)));
+}
+
 // Allow to handle differents format of printf
 static int	print_format(int fd, char format, va_list args)
 {
