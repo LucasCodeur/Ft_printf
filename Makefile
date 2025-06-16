@@ -33,6 +33,7 @@ lib:
 
 clean:
 	rm -f *.o
+	rm -f *.a
 	$(MAKE) clean -C $(LIBFT_DIR)
 
 fclean: clean
@@ -42,4 +43,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
