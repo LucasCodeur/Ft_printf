@@ -2,11 +2,14 @@
 
 ## Description
 
-ft_printf est un projet qui consiste a recoder une version simplifiee de la fonction printf de la libc. Il permet d'afficher differents types de donnees sur la sortie standard (comme des entiers, des chaines de caracteres, des caracteres, des pointeurs, etc.), tout en gerant des formats specifiques comme `%d`, `%s`, `%x`, `%p`, etc.
+`ft_printf` is a project that consists of recoding a simplified version of the `printf` function from the **libc**.
+It allows displaying different types of data on the standard output (such as integers, strings, characters, pointers, etc.), while handling specific formats like `%d`, `%s`, `%x`, `%p`, and so on.
 
-### Fonctionnalites 
+---
 
-Fonction principal permettant de print sur la sortie standard, a argument variable :
+### Features
+
+Main function that prints to the standard output with a variable number of arguments:
 
 ```
 int	ft_printf(const char *format, ...)
@@ -33,7 +36,7 @@ int	ft_printf(const char *format, ...)
 }
 ```
 
-Permet le nombre variable d'arguments : 
+This function supports a variable number of arguments:
 
 ```
 stdarg.h
@@ -43,18 +46,17 @@ va_arg(args, int);
 va_end(args);
 ```
 
-- **va_list args** : Permet d'utiliser une liste d'arguments dans une fonction variadique.
+* **va_list args** : Used to handle a list of arguments in a variadic function.
+* **va_start(args, format)** : Initializes the `va_list` before accessing the arguments, taking as parameters the list and the last fixed argument before the variadic ones.
+* **va_arg(args, int)** : Accesses the next argument in the list, returning it as the specified type.
+* **va_end(args)** : Cleans up the list when finished.
 
-- **va_start(args, format)** : Avant de pouvoir acceder aux arguments, il faut initialiser la `va_list` grace a cette macro prenant comme argument la `va_list` et le dernier argument avant la liste variadique.
+The main purpose of `ft_printf` is to loop through the `format` string, detect if there is a `%`, and if so, call the `print_format` function to print the corresponding type on the standard output.
+Otherwise, it simply writes the character.
 
-- **va_arg(args, int)** : Cela permet d'acceder aux arguments suivants, chaque appel de celle-ci retourne un argument de type specifique qui est indiquee dans le dernier argument de la macro.
+If an error occurs (for example, if `write` returns `-1`), the function returns `-1` for proper error handling.
 
-- **va_end(args)** : Une fois fini de traiter les arguments, il faut liberer les ressources alloues avec `va_end`.
-
-Autrement le but global de la fonction ft_printf, est de boucler sur la string format, de detecter s'il y a un *%*, si c'est le cas d'appeler la fonction `print_format` afin d'ecrire sur la sortie standard selon le type de donnee. Autrement on se contente d'ecrire si c'est seulement des caracteres.
-En cas d'erreur si la valeur retourne par write est = -1 et bien on return -1 pour la gestion d'erreur.
-
-Print_format est un arbre de if permettant de d'ecrire selon le type de donnee. Comme dans la fonction ft_print, la valeur du write est stocke dans un count pour la gestion d'erreur.
+`print_format` is a chain of conditional checks that writes data depending on its type. Like in `ft_printf`, the number of written characters is stored in `count` to manage errors.
 
 ```
 static int	print_format(char format, va_list args)
@@ -84,9 +86,11 @@ static int	print_format(char format, va_list args)
 }
 ```
 
-#### Decomposition de print_format
+---
 
-Fonction qui ecrit un caractere sur la sortie standard.
+#### Breakdown of `print_format`
+
+**Function that writes a single character to the standard output:**
 
 ```
 int	print_char(char c)
@@ -95,7 +99,10 @@ int	print_char(char c)
 }
 ```
 
-Fonction qui ecrit une string sur la sortie standard. Utilisation de `ft_putstr_fd` permet l'utilisation de file descriptor afin d'ecrire sur la sortie voulue. Si str n'existe pas, il faut ecrire `(null)`.
+**Function that writes a string to the standard output:**
+
+The use of `ft_putstr_fd` allows writing to a specific file descriptor.
+If `str` is null, the function writes `(null)`.
 
 ```
 int	print_str(char *str)
@@ -115,9 +122,10 @@ int	print_str(char *str)
 }
 ```
 
-Fonction permettant d'ecrire en format hexadecimal, etant le format de l'adresse des pointeurs.
-Si le pointeur en question n'existe pas, comme pour la vraie fonction printf, il faut ecrire `(nil)`.
-Il faut d'abord commencer par ecrire **0x** pour respecter le format des adresses. Sinon ce qui permet la conversion dans le format hexadecimal est la fonction `putbase`.
+**Function that writes a pointer in hexadecimal format:**
+
+If the pointer is null, the function writes `(nil)` (just like the real `printf`).
+Otherwise, it first writes `0x` and then converts the address to hexadecimal using `putbase`.
 
 ```
 int	print_hex(void *p, char *base, long size)
@@ -140,7 +148,11 @@ int	print_hex(void *p, char *base, long size)
 }
 ```
 
-La fonction `putbase` est une fonction recursive qui convertit un nombre entier non signe (`unsigned long nb`) en une representation dans une base donnee `base` et l'affiche sur la sortie standard.
+---
+
+### Function `putbase`
+
+This recursive function converts an unsigned integer (`unsigned long nb`) into the given base (`base`) and writes it to the standard output.
 
 ```
 void	putbase(unsigned long nb, char *base, unsigned long size, int *count)
@@ -160,51 +172,37 @@ void	putbase(unsigned long nb, char *base, unsigned long size, int *count)
 }
 ```
 
-#### Parametres
+#### Parameters
 
-- `unsigned long nb` : Le nombre a convertir et a afficher dans la base specifiee.
+* `unsigned long nb` : The number to convert and print.
+* `char *base` : The string containing the symbols of the base.
+* `unsigned long size` : The size of the base.
 
-- `char *base` : La chaine de caracteres contenant les symboles de la base.
+---
 
-- `unsigned long size` : La taille de la base.
+`tmp` is a local variable used to store the number of characters written during the execution of the function.
+We don’t write directly into `count` because the function is recursive — doing so would overwrite previous results.
+Instead, we use `tmp` as a temporary buffer and add it to `count` after each call.
 
----------------------------------------------------------------------------------------------------------------------------------------
+If `nb` is greater than or equal to `size`, the function calls itself with `nb / size` to process digits from the most significant to the least significant (left to right).
 
-`tmp` est une variable local qui sera utilisee pour stocker le nombre de caracteres ecrits pendant l'execution de la fonction. Pourquoi ne pas stocker la valeur directement dans le count ? Le but etant de return le nombre exact de caracteres ecrit, si nous stockons la valeur directement dans count sachant que c'est une fonction recursive cela ecrasera le resultat a chaque appel de celle-ci , la solution etait de stocker dans une valeur tompon et de l'ajouter a count.
+Then `nb % size` gives the digit to display in the current base.
 
-```
-int tmp;
-tmp = 0;
-```
+---
 
-Si nb est plus grand que la taille de la base, la fonction s'appelle recursivement avec `nb / size`. Cela permet de diviser le nombre et de traiter les chiffres de maniere recursive, du plus significatif au moins significatif (de gauche a droite).
+#### Example
 
-```
-if (nb >= size)
-	putbase(nb / size, base, size, count);
-```
+If we want to convert from decimal to hexadecimal, for example `nb = 255` and `size = 16`, then `nb % size` equals `15`, which corresponds to the letter `F` in hexadecimal (`0123456789ABCDEF`).
 
+`base[nb % size]` accesses the character corresponding to that value in the base string.
 
-La valeur `nb % size` donne le chiffre correspondant dans la base actuelle, cela calcule le reste de la division de `nb` par `size`. Ce reste correspond au **chiffre** que l'on souhaite afficher dans la base.
+---
 
-```
-tmp += write(1, &base[nb % size], 1);
-```
+### Function `print_nbr`
 
-#### Exemple
-
-- Si on veut convertir de la base decimal a la base hexadecimal, admettons `nb = 255` et `size = 16` alors `nb % size` serait egal a `15`, 15 correspond a la lettre `F` du format hexadecimal (0123456789ABCDEF).
-
-
-- `base` est une chaine de caracteres qui contient les symboles de la base.
-
-- `base[nb % size]` utilise l'indice calcule precedemment pour acceder au caractere dans la chaine `base` qui correspond au chiffre `nb % size`.
-
-```
-&base[nb % size]
-```
-
-Fonction permettant d'afficher les int. Le format est similaire a `print_hex`, a la difference qu'on traite le cas des nombres negatifs, en faisant une inversion de valeur avec `nb = -nb` et qu'on write le `-` pour afficher que c'est negatif. Sinon putbase est utilise de nouveau pour ecrire sur la sortie standard.
+This function prints integers.
+It works similarly to `print_hex`, except it handles negative numbers:
+if `nb` is negative, the function writes the `-` sign and then flips the number to positive before calling `putbase`.
 
 ```
 int	print_nbr(long nb, char *base, long size)
@@ -222,3 +220,232 @@ int	print_nbr(long nb, char *base, long size)
 	putbase(nb, base, size, &count);
 	return (count);
 }
+```
+---
+
+# FT_PRINTF
+
+## Description
+
+`ft_printf` est un projet qui consiste à recoder une version simplifiée de la fonction `printf` de la **libc**.
+Il permet d’afficher différents types de données sur la sortie standard (comme des entiers, des chaînes de caractères, des caractères, des pointeurs, etc.), tout en gérant des formats spécifiques comme `%d`, `%s`, `%x`, `%p`, etc.
+
+---
+
+### Fonctionnalités
+
+Fonction principale permettant d’afficher sur la sortie standard, avec un nombre variable d’arguments :
+
+```
+int	ft_printf(const char *format, ...)
+{
+	int		count;
+	va_list	args;
+
+	va_start(args, format);
+	count = 0;
+	if (format == 0)
+		return (-1);
+	while (*format)
+	{
+		if (*format == '%')
+			count += print_format(*++format, args);
+		else
+			count += write(1, format, 1);
+		if (count == -1)
+			return (-1);
+		++format;
+	}
+	va_end(args);
+	return (count);
+}
+```
+
+Permet la gestion d’un nombre variable d’arguments :
+
+```
+stdarg.h
+va_list	args;
+va_start(args, format);
+va_arg(args, int);
+va_end(args);
+```
+
+* **va_list args** : Permet de stocker la liste des arguments d’une fonction variadique.
+* **va_start(args, format)** : Initialise la `va_list` avant d’accéder aux arguments, en précisant le dernier argument fixe avant la liste variadique.
+* **va_arg(args, int)** : Permet d’accéder aux arguments suivants. Chaque appel renvoie un argument du type spécifié.
+* **va_end(args)** : Libère les ressources associées à la `va_list` une fois le traitement terminé.
+
+Le but global de `ft_printf` est de parcourir la chaîne `format`, de détecter la présence d’un `%`, et, le cas échéant, d’appeler la fonction `print_format` pour écrire sur la sortie standard selon le type de donnée.
+Sinon, la fonction écrit simplement le caractère courant.
+
+En cas d’erreur (si `write` retourne `-1`), la fonction renvoie `-1` pour signaler l’échec.
+
+`print_format` est une série de conditions permettant d’écrire le bon type de donnée. Comme dans `ft_printf`, la valeur retournée par `write` est stockée dans une variable `count` afin de gérer les erreurs.
+
+```
+static int	print_format(char format, va_list args)
+{
+	int		count;
+
+	count = 0;
+	if (format == 'c')
+		count += print_char(va_arg(args, int));
+	else if (format == 's')
+		count += print_str(va_arg(args, char *));
+	else if (format == 'p')
+		count += print_hex(va_arg(args, void *), "0123456789abcdef", 16);
+	else if (format == 'd')
+		count += print_nbr(va_arg(args, int), "0123456789abcdef", 10);
+	else if (format == 'u')
+		count += print_nbr(va_arg(args, unsigned int), "0123456789abcdef", 10);
+	else if (format == 'i')
+		count += print_nbr(va_arg(args, int), "0123456789abcdef", 10);
+	else if (format == 'x')
+		count += print_nbr(va_arg(args, unsigned int), "0123456789abcdef", 16);
+	else if (format == 'X')
+		count += print_nbr(va_arg(args, unsigned int), "0123456789ABCDEF", 16);
+	else if (format == '%')
+		count += write(1, "%", 1);
+	return (count);
+}
+```
+
+---
+
+#### Décomposition de `print_format`
+
+**Fonction qui écrit un caractère sur la sortie standard :**
+
+```
+int	print_char(char c)
+{
+	return (write(1, &c, 1));
+}
+```
+
+**Fonction qui écrit une chaîne sur la sortie standard :**
+
+L’utilisation de `ft_putstr_fd` permet d’écrire sur un descripteur de fichier.
+Si la chaîne `str` est nulle, la fonction écrit `(null)`.
+
+```
+int	print_str(char *str)
+{
+	int		count;
+
+	count = 0;
+	if (!str)
+	{
+		count += ft_putstr_fd("(null)", 1);
+		if (count == -1)
+			return (-1);
+		return (6);
+	}
+	count += ft_putstr_fd(str, 1);
+	return (count);
+}
+```
+
+**Fonction qui écrit un pointeur en format hexadécimal :**
+
+Si le pointeur est nul, la fonction écrit `(nil)` comme le vrai `printf`.
+Sinon, elle commence par écrire `0x`, puis convertit l’adresse en hexadécimal à l’aide de `putbase`.
+
+```
+int	print_hex(void *p, char *base, long size)
+{
+	int		count;
+
+	count = 0;
+	if (!p)
+	{
+		count = ft_putstr_fd("(nil)", 1);
+		if (count == -1)
+			return (-1);
+		return (5);
+	}
+	count += ft_putstr_fd("0x", 1);
+	if (count == -1)
+		return (-1);
+	putbase((unsigned long)p, base, size, &count);
+	return (count);
+}
+```
+
+---
+
+### Fonction `putbase`
+
+Cette fonction récursive convertit un entier non signé (`unsigned long nb`) dans une base donnée (`base`) et l’affiche sur la sortie standard.
+
+```
+void	putbase(unsigned long nb, char *base, unsigned long size, int *count)
+{
+	int	tmp;
+
+	tmp = 0;
+	if (nb >= size)
+		putbase(nb / size, base, size, count);
+	tmp += write(1, &base[nb % size], 1);
+	*count += tmp;
+	if (tmp == -1)
+	{
+		*count = tmp;
+		return ;
+	}
+}
+```
+
+#### Paramètres
+
+* `unsigned long nb` : Nombre à convertir et afficher.
+* `char *base` : Chaîne contenant les symboles de la base.
+* `unsigned long size` : Taille de la base.
+
+---
+
+`tmp` est une variable locale servant à stocker le nombre de caractères écrits à chaque appel.
+On ne peut pas écrire directement dans `count`, car la fonction est récursive — cela écraserait la valeur précédente.
+On stocke donc le résultat dans `tmp` avant de l’ajouter à `count`.
+
+Si `nb` est supérieur ou égal à `size`, la fonction s’appelle elle-même avec `nb / size` pour traiter les chiffres de gauche à droite.
+
+`nb % size` correspond ensuite au chiffre à afficher dans la base choisie.
+
+---
+
+#### Exemple
+
+Pour convertir un nombre de la base décimale à l’hexadécimal :
+Si `nb = 255` et `size = 16`, alors `nb % size = 15`, ce qui correspond à la lettre `F` dans la base hexadécimale (`0123456789ABCDEF`).
+
+`base[nb % size]` permet d’accéder au caractère correspondant dans la chaîne `base`.
+
+---
+
+### Fonction `print_nbr`
+
+Fonction qui affiche des entiers.
+Le fonctionnement est similaire à `print_hex`, à la différence qu’on gère les nombres négatifs :
+si `nb` est négatif, on écrit le signe `-` puis on inverse la valeur avant d’appeler `putbase`.
+
+```
+int	print_nbr(long nb, char *base, long size)
+{
+	int	count;
+
+	count = 0;
+	if (nb < 0 && size == 10)
+	{
+		nb = -nb;
+		count += write(1, "-", 1);
+		if (count == -1)
+			return (-1);
+	}
+	putbase(nb, base, size, &count);
+	return (count);
+}
+```
+
+---
